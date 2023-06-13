@@ -32,6 +32,7 @@ Google Data, Google Sheets was used, to receive the information through the API 
   sheet.getRange(2, 1, values.length, values[0].length).setValues(values);
 }
 
+// This code makes the date to ISO 8601 format.
 function formatDate(date) {
   var year = date.getFullYear();
   var month = ("0" + (date.getMonth() + 1)).slice(-2);
