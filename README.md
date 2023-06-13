@@ -46,3 +46,4 @@ function formatDate(date) {
   return formattedDate;
 }
 ```
+Later the Sheet was imported to the Google Data and a chart was made from it.
