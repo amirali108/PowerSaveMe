@@ -51,3 +51,9 @@ function formatDate(date) {
 Later the Sheet was imported to the Google Data and a chart was made from it.
 ### Geolocation API
 
+To get Users longitude and latitude a geolocation API is needed, for now i am using a free API which is limited to 2500 calls/day which is more that enough for right now. 
+I am sending a requst with City and Country name and getting back location. 
+´´´
+asddaa
+´´´
+
