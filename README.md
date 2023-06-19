@@ -53,7 +53,39 @@ Later the Sheet was imported to the Google Data and a chart was made from it.
 
 To get Users longitude and latitude a geolocation API is needed, for now i am using a free API which is limited to 2500 calls/day which is more that enough for right now. 
 I am sending a requst with City and Country name and getting back location. 
-´´´
-asddaa
-´´´
+```
+function geocodeCity(cityName, apiKey) {
+  var api_url = 'https://api.opencagedata.com/geocode/v1/json';
+
+  var query = encodeURIComponent(cityName);
+  var request_url = api_url +
+    '?' +
+    'key=' + apiKey +
+    '&q=' + query;
+
+  var response = UrlFetchApp.fetch(request_url);
+  var data = JSON.parse(response.getContentText());
+
+  if (data.status.code === 200) {
+    var latitude = data.results[0].geometry.lat;
+    var longitude = data.results[0].geometry.lng;
+    return { latitude: latitude, longitude: longitude };
+  } else {
+    throw new Error('Failed to geocode city.');
+  }
+}
+
+// Example usage
+var city = 'Luleå, Sweden';
+var apiKey = '8059d5c7a5284da497c2979a305070fb'; // Replace with your OpenCage API key
+
+try {
+  var coordinates = geocodeCity(city, apiKey);
+  console.log('Latitude: ' + coordinates.latitude);
+  console.log('Longitude: ' + coordinates.longitude);
+} catch (error) {
+  console.error(error);
+}
+
+```
 
