@@ -1,5 +1,6 @@
 # PowerSaveMe
 ## Used API's
+### Electricy Prices
 First the free API from https://www.elprisetjustnu.se/elpris-api was found. It returns a json which includes the price for KwH in SEK and EUR and the time(hourly). To receive the data in
 Google Data, Google Sheets was used, to receive the information through the API and do some basic processing. The code for the Google Sheets that receives the API and process the data is 
 ```function fetchDataFromAPI() {
@@ -48,3 +49,5 @@ function formatDate(date) {
 }
 ```
 Later the Sheet was imported to the Google Data and a chart was made from it.
+
+
