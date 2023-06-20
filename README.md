@@ -88,4 +88,47 @@ try {
 }
 
 ```
+###Temperature Forecast API and extraction. To retrieve the temperature the SMHI api is used and code looks like that 
+```
+var url = 'https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/'+lon+'/lat/'+lat+'/data.json';
 
+var response = UrlFetchApp.fetch(url);
+var data = JSON.parse(response.getContentText());
+
+const currentTime = new Date(); // Current time
+const nextTwoDays = currentTime.getTime() + (2 * 24 * 60 * 60 * 1000); // Time for next two days
+
+const nextTwoDaysData = data.timeSeries.reduce((result, entry) => {
+  const validTime = new Date(entry.validTime);
+  if (validTime.getTime() <= nextTwoDays) {
+    const temperature = entry.parameters.find(param => param.name === "t").values[0];
+    result.push({
+      time: entry.validTime,
+      temperature: temperature
+    });
+  }
+  return result;
+}, []);
+
+console.log(nextTwoDaysData)
+
+const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const lastRow = sheet.getLastRow();
+
+  // Clear previous data (excluding the row titles)
+  if (lastRow > 1) {
+    sheet.getRange(2, 1, lastRow - 1, 2).clearContent();
+  }
+
+  // Set the row titles
+  sheet.getRange("A1").setValue("Time");
+  sheet.getRange("B1").setValue("Temperature");
+
+  // Write the data to the sheet
+  for (let i = 0; i < nextTwoDaysData.length; i++) {
+    const { time, temperature } = nextTwoDaysData[i];
+
+    sheet.getRange(i + 2, 1).setValue(time);
+    sheet.getRange(i + 2, 2).setValue(temperature);
+  }
+```
