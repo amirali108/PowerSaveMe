@@ -88,7 +88,7 @@ try {
 }
 
 ```
-###Temperature Forecast API and extraction. To retrieve the temperature the SMHI api is used and code looks like that 
+### Temperature Forecast API and extraction. To retrieve the temperature the SMHI api is used and code looks like that 
 ```
 var url = 'https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/'+lon+'/lat/'+lat+'/data.json';
 
