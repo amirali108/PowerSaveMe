@@ -88,47 +88,43 @@ try {
 }
 
 ```
-### Temperature Forecast API and extraction. To retrieve the temperature the SMHI api is used and code looks like that 
+### Meteorological forecastt API and extraction. To retrieve the temperature, wind speed and if how cloudy(i get more stuff from there but for now this is what i need) it is the SMHI api is used and code looks like that 
 ```
 var url = 'https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/'+lon+'/lat/'+lat+'/data.json';
 
 var response = UrlFetchApp.fetch(url);
 var data = JSON.parse(response.getContentText());
 
-const currentTime = new Date(); // Current time
-const nextTwoDays = currentTime.getTime() + (2 * 24 * 60 * 60 * 1000); // Time for next two days
 
-const nextTwoDaysData = data.timeSeries.reduce((result, entry) => {
+
+const nextTwoDays = data.timeSeries.slice(0, 48).map((entry) => {
   const validTime = new Date(entry.validTime);
-  if (validTime.getTime() <= nextTwoDays) {
-    const temperature = entry.parameters.find(param => param.name === "t").values[0];
-    result.push({
-      time: entry.validTime,
-      temperature: temperature
-    });
-  }
-  return result;
-}, []);
+  const temperature = entry.parameters.find((param) => param.name === 't').values[0];
+  const windSpeed = entry.parameters.find((param) => param.name === 'ws').values[0];
+  const cloudCover = entry.parameters.find((param) => param.name === 'tcc_mean').values[0];
 
-console.log(nextTwoDaysData)
+  return {
+    time: validTime.toISOString(),
+    temperature,
+    windSpeed,
+    cloudCover,
+  };
+});
 
-const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  const lastRow = sheet.getLastRow();
+// Write the extracted data to the sheet
+const sheet = SpreadsheetApp.getActiveSheet();
+sheet.clear()
+const headers = ['Time', 'Temperature', 'Wind Speed', 'Cloud Coverage'];
+sheet.appendRow(headers);
 
-  // Clear previous data (excluding the row titles)
-  if (lastRow > 1) {
-    sheet.getRange(2, 1, lastRow - 1, 2).clearContent();
-  }
 
-  // Set the row titles
-  sheet.getRange("A1").setValue("Time");
-  sheet.getRange("B1").setValue("Temperature");
-
-  // Write the data to the sheet
-  for (let i = 0; i < nextTwoDaysData.length; i++) {
-    const { time, temperature } = nextTwoDaysData[i];
-
-    sheet.getRange(i + 2, 1).setValue(time);
-    sheet.getRange(i + 2, 2).setValue(temperature);
-  }
+nextTwoDays.forEach((entry) => {
+  const row = [
+    entry.time,
+    entry.temperature,
+    entry.windSpeed,
+    entry.cloudCover,
+  ];
+  sheet.appendRow(row);
+});
 ```
