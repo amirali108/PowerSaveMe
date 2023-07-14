@@ -15,7 +15,7 @@ price_list = []
 
 
 
-hourly_data = pd.read_csv(r'C:\Users\suad\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
+hourly_data = pd.read_csv(r'C:\Users\suadr\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
 
 star_period = '2023-03-04'
 end_period = '2023-03-10'

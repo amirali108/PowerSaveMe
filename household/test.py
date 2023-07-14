@@ -1,3 +1,11 @@
+import pandas as pd 
+
+
+star_period = '2023-03-04'
+end_period = '2023-03-10'
+
+hourly_data = pd.read_csv(r'C:\Users\suadr\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
+
 
 
 class House:
@@ -35,13 +43,11 @@ class House:
 
 
 class Simulation:
-    def __init__(self, temperature, cloudiness, wind_speed, start_date, end_date):
+    def __init__(self, start_date, end_date, hourly_data):
         self.houses = []
         self.start_date = start_date
         self.end_date = end_date
-        self.temperature = temperature
-        self.cloudiness = cloudiness
-        self.wind_speed = wind_speed
+        self.hourly_data = hourly_data.loc[start_date:end_date]
         self.optimizer = None
     
     def run_simulation(self):
@@ -51,6 +57,9 @@ class Simulation:
             
         if self.optimizer:
             self.optimizer.optimize_consumption()
+    
+    def print_hourly_data(self):
+        print(self.hourly_data)
     
 
 
@@ -65,14 +74,15 @@ class Device:
 
 
 # Example usage:
-house1 = House("House 1", 200, "electric")
+house1 = House("House 1", 200, "electric", 0.9, 0.8)
 device1 = Device("Device 1", 100.0, [0.5, 0.5, 0.5])  # Example usage pattern [0.5, 0.5, 0.5] for 3 hours
 device2 = Device("Device 2", 50.0, [0.2, 0.3, 0.1])  # Example usage pattern [0.2, 0.3, 0.1] for 3 hours
 house1.add_device(device1)
 house1.add_device(device2)
 
-simulation = Simulation()
+simulation = Simulation(star_period, end_period, hourly_data)
 simulation.houses.append(house1)
 simulation.run_simulation()
 house1.get_total_consumption()
 
+simulation.print_hourly_data()
