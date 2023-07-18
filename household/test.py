@@ -2,9 +2,10 @@ import pandas as pd
 
 
 star_period = '2023-03-04'
-end_period = '2023-03-10'
+end_period = '2023-03-05'
 
-hourly_data = pd.read_csv(r'C:\Users\suadr\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
+# make relative path for the repo 
+hourly_data = pd.read_csv(r'C:\Users\suad\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
 
 
 
@@ -16,22 +17,29 @@ class House:
         self.heating_type = heating_type
         self.insulation_factor = insulation_factor
         self.devices = []
+        self.target_temperature = 21.5
         self.total_consumption= 0.0
+        self.hourly_consumptions = {}
+        self.hourly_consumption_price = {}
+        self.total_consumption_price = 0.0
     
-    def calculate_total_consumption(self):
-        for device in self.devices:
-            self.total_consumption += device.calculate_consumption()
-        self.total_consumption += self.calculate_heating_consumption()
-        return self.total_consumption
     
-    def calculate_heating_consumption(self):
-        if self.heating_type == "electric":
-            return self.size * 10.0  # Example formula for electric heating consumption
-        elif self.heating_type == "gas":
-            return self.size * 5.0   # Example formula for gas heating consumption
-        else:
-            return 0.0
+
+    def calculate_hourly_heating_consumption(self, time, price, temperature):
+        self.hourly_consumptions[time] = self.size *(self.target_temperature - temperature)/(self.heating_efficiency * self.insulation_factor)/1000
+        self.hourly_consumption_price[time] = self.hourly_consumptions[time]  * price
+        print(price)
+        self.total_consumption += self.hourly_consumptions[time]
+        self.total_consumption_price += self.hourly_consumption_price[time]
+
     
+
+    
+    def get_total_consumption_price(self):
+        print(self.total_consumption_price)
+
+    def get_hourly_consumption_price(self):
+        print(self.hourly_consumption_price)
     def get_devices(self):
         return self.devices
     
@@ -40,6 +48,9 @@ class House:
 
     def get_total_consumption(self):
         print(self.total_consumption)
+    
+    def get_hourly_consumptions(self):
+        print(self.hourly_consumptions)
 
 
 class Simulation:
@@ -52,14 +63,16 @@ class Simulation:
     
     def run_simulation(self):
         for house in self.houses:
-            total_consumption = house.calculate_total_consumption()
+            for index,row in self.hourly_data.iterrows():
+                house.calculate_hourly_heating_consumption(index, row['Price'], row['Temperature'])
+
             # Perform any necessary actions with the total consumption
             
         if self.optimizer:
             self.optimizer.optimize_consumption()
     
-    def print_hourly_data(self):
-        print(self.hourly_data)
+    
+
     
 
 
@@ -83,6 +96,8 @@ house1.add_device(device2)
 simulation = Simulation(star_period, end_period, hourly_data)
 simulation.houses.append(house1)
 simulation.run_simulation()
+
+
+house1.get_hourly_consumption_price()
 house1.get_total_consumption()
 
-simulation.print_hourly_data()
