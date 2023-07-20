@@ -1,11 +1,12 @@
 import pandas as pd 
 
+from datetime import datetime
 
 star_period = '2023-03-04'
 end_period = '2023-03-05'
 
 # make relative path for the repo 
-hourly_data = pd.read_csv(r'C:\Users\suad\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
+hourly_data = pd.read_csv(r'C:\Users\suadr\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
 
 
 
@@ -17,7 +18,7 @@ class House:
         self.heating_type = heating_type
         self.insulation = insulation
         self.devices = []
-        self.target_temperature = 21.5
+        self.target_temperature = 20.5
         self.total_consumption= 0.0
         self.hourly_consumptions = {}
         self.hourly_consumption_price = {}
@@ -32,9 +33,15 @@ class House:
         self.U_VALUE_WINDOW = 1.5  # Heat transfer coefficient of the window, W/(m2.K)
         self.WINDOW_TO_WALL_RATIO = 0.2  # Ratio of window area to wall area
     
+
+    def calculate_total_hourly_consumption(self, time, price, outside_temperature, wind_speed, cloudiness):
+        self.hourly_consumptions[time]= self.calculate_hourly_heating_consumption(outside_temperature, wind_speed, cloudiness) + sum([device.calculate_consumption(time.hour) for device in self.devices])/1000
+        self.hourly_consumption_price[time] = self.hourly_consumptions[time]  * price
+        self.total_consumption += self.hourly_consumptions[time]         
+        self.total_consumption_price += self.hourly_consumption_price[time]
     
 
-    def calculate_hourly_heating_consumption(self, time, price, outside_temperature, wind_speed, cloudiness):
+    def calculate_hourly_heating_consumption(self, outside_temperature, wind_speed, cloudiness):
         # Calculate the temperature difference
         temperature_difference = self.target_temperature - outside_temperature
 
@@ -76,12 +83,13 @@ class House:
         energy_needed += heat_loss_walls + heat_loss_windows
 
         # Convert energy from kJ to kWh
-        self.hourly_consumptions[time]= energy_needed / 3600
-        print(energy_needed / 3600)
-        self.hourly_consumption_price[time] = self.hourly_consumptions[time]  * price
-        print(price)
-        self.total_consumption += self.hourly_consumptions[time]
-        self.total_consumption_price += self.hourly_consumption_price[time]
+        return energy_needed / 3600
+
+        # print(energy_needed / 3600)
+        # self.hourly_consumption_price[time] = self.hourly_consumptions[time]  * price
+        # print(price)
+        # self.total_consumption += self.hourly_consumptions[time]
+        # self.total_consumption_price += self.hourly_consumption_price[time]
 
     
     def get_total_consumption_price(self):
@@ -89,6 +97,7 @@ class House:
 
     def get_hourly_consumption_price(self):
         print(self.hourly_consumption_price)
+
     def get_devices(self):
         return self.devices
     
@@ -100,7 +109,19 @@ class House:
     
     def get_hourly_consumptions(self):
         print(self.hourly_consumptions)
-
+    
+    def get_power_usage_time_period(self, start_time, end_time):
+        start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+        end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+    
+        extracted_values = {}
+        for key, value in self.hourly_consumptions.items():
+            if start_time <= key <= end_time:
+                extracted_values[key] = value
+        
+        print(extracted_values)
+        print(sum(extracted_values.values()))
+        
 
 class Simulation:
     def __init__(self, start_date, end_date, hourly_data):
@@ -113,7 +134,7 @@ class Simulation:
     def run_simulation(self):
         for house in self.houses:
             for index,row in self.hourly_data.iterrows():
-                house.calculate_hourly_heating_consumption(index, row['Price']/100, row['Temperature'], row['Wind speed'], row['Cloudiness'])
+                house.calculate_total_hourly_consumption(index, row['Price']/100, row['Temperature'], row['Wind speed'], row['Cloudiness'])
 
             # Perform any necessary actions with the total consumption
             
@@ -126,19 +147,34 @@ class Simulation:
 
 
 class Device:
-    def __init__(self, name, power_rating, usage_pattern):
+    def __init__(self, name, power_rating):
         self.name = name
         self.power_rating = power_rating
-        self.usage_pattern = usage_pattern
+        self.hourly_usage = {}
     
-    def calculate_consumption(self):
-        return self.power_rating * sum(self.usage_pattern)
+
+    def usage_pattern(self, hour):
+        print(hour)
+        return 1
+
+    def calculate_consumption(self, hour):
+        self.hourly_usage[hour] = self.power_rating * self. (hour)
+        return self.hourly_usage[hour]
+    
+    def get_hourly_usage(self):
+        print(self.hourly_usage)
+    
+    
 
 
+#######################
+
+
+usagepatter=[]
 # Example usage:
 house1 = House("House 1", 120, "electric", 0.9, 0.8)
-device1 = Device("Device 1", 100.0, [0.5, 0.5, 0.5])  # Example usage pattern [0.5, 0.5, 0.5] for 3 hours
-device2 = Device("Device 2", 50.0, [0.2, 0.3, 0.1])  # Example usage pattern [0.2, 0.3, 0.1] for 3 hours
+device1 = Device("Device 1", 100.0)  # Example usage pattern [0.5, 0.5, 0.5] for 3 hours
+device2 = Device("Device 2", 50.0)  # Example usage pattern [0.2, 0.3, 0.1] for 3 hours
 house1.add_device(device1)
 house1.add_device(device2)
 
@@ -147,5 +183,7 @@ simulation.houses.append(house1)
 simulation.run_simulation()
 
 
-house1.get_hourly_consumptions()
 
+house1.get_power_usage_time_period('2023-03-05 00:00:00', '2023-03-05 23:00:00')
+
+device1.get_hourly_usage()
