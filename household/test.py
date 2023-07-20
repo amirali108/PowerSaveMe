@@ -147,6 +147,5 @@ simulation.houses.append(house1)
 simulation.run_simulation()
 
 
-house1.get_hourly_consumption_price()
-house1.get_total_consumption_price()
+house1.get_hourly_consumptions()
 
