@@ -6,7 +6,7 @@ star_period = '2023-03-04'
 end_period = '2023-03-05'
 
 # make relative path for the repo 
-hourly_data = pd.read_csv(r'C:\Users\suadr\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
+hourly_data = pd.read_csv(r'C:\Users\suad\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
 
 
 
@@ -35,7 +35,7 @@ class House:
     
 
     def calculate_total_hourly_consumption(self, time, price, outside_temperature, wind_speed, cloudiness):
-        self.hourly_consumptions[time]= self.calculate_hourly_heating_consumption(outside_temperature, wind_speed, cloudiness) + sum([device.calculate_consumption(time.hour) for device in self.devices])/1000
+        self.hourly_consumptions[time]= self.calculate_hourly_heating_consumption(outside_temperature, wind_speed, cloudiness) + sum([device.calculate_consumption(time.hour) for device in self.devices])
         self.hourly_consumption_price[time] = self.hourly_consumptions[time]  * price
         self.total_consumption += self.hourly_consumptions[time]         
         self.total_consumption_price += self.hourly_consumption_price[time]
@@ -121,7 +121,10 @@ class House:
         
         print(extracted_values)
         print(sum(extracted_values.values()))
-        
+
+    def get_all_devices_hourly_usage(self):
+        for device in self.devices:
+            device.get_hourly_usage() 
 
 class Simulation:
     def __init__(self, start_date, end_date, hourly_data):
@@ -154,29 +157,55 @@ class Device:
     
 
     def usage_pattern(self, hour):
-        print(hour)
-        return 1
+        # Define a usage pattern based on the hour of the day
+        if 0 <= hour < 6:  # Low usage from midnight to 6am
+            return 0.2
+        elif 6 <= hour < 9:  # High usage from 6am to 9am
+            return 0.9
+        elif 9 <= hour < 17:  # Medium usage from 9am to 5pm
+            return 0.5
+        elif 17 <= hour < 23:  # High usage from 5pm to 9pm
+            return 0.9
+        else:  # Low usage from 9pm to midnight
+            return 0.5
 
     def calculate_consumption(self, hour):
-        self.hourly_usage[hour] = self.power_rating * self. (hour)
+        self.hourly_usage[hour] = self.power_rating * self.usage_pattern(hour)/1000
         return self.hourly_usage[hour]
     
     def get_hourly_usage(self):
         print(self.hourly_usage)
     
     
+    
+
+class solar_panel(Device):
+    def __init__(self, name, power_rating):
+        super().__init__(name, power_rating)
+
+    def usage_pattern(self, hour):
+        # Define a usage pattern based on the hour of the day
+        if 6 <= hour < 18:  # Solar panels generate electricity from 6am to 6pm
+            return 1
+        else:  # No electricity is generated from 6pm to 6am
+            return 0
+
+    def calculate_consumption(self, hour):
+        # For solar panels, the "consumption" is actually negative because they generate electricity
+        self.hourly_usage[hour] = -self.power_rating * self.usage_pattern(hour)
+        print(self.hourly_usage[hour])
+        return self.hourly_usage[hour]
 
 
 #######################
 
-
-usagepatter=[]
 # Example usage:
 house1 = House("House 1", 120, "electric", 0.9, 0.8)
 device1 = Device("Device 1", 100.0)  # Example usage pattern [0.5, 0.5, 0.5] for 3 hours
 device2 = Device("Device 2", 50.0)  # Example usage pattern [0.2, 0.3, 0.1] for 3 hours
 house1.add_device(device1)
 house1.add_device(device2)
+house1.add_device(solar_panel("Solar Panel", 100.0))  
 
 simulation = Simulation(star_period, end_period, hourly_data)
 simulation.houses.append(house1)
@@ -186,4 +215,4 @@ simulation.run_simulation()
 
 house1.get_power_usage_time_period('2023-03-05 00:00:00', '2023-03-05 23:00:00')
 
-device1.get_hourly_usage()
+house1.get_all_devices_hourly_usage()
