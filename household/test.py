@@ -2,8 +2,8 @@ import pandas as pd
 
 from datetime import datetime
 
-star_period = '2023-03-04'
-end_period = '2023-03-05'
+star_period = '2023-07-12'
+end_period = '2023-07-12'
 
 # make relative path for the repo 
 hourly_data = pd.read_csv(r'C:\Users\suad\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
@@ -17,6 +17,7 @@ class House:
         self.heating_efficiency = heating_efficiency
         self.heating_type = heating_type
         self.insulation = insulation
+        self.battery = None
         self.devices = []
         self.target_temperature = 20.5
         self.total_consumption= 0.0
@@ -36,12 +37,17 @@ class House:
 
     def calculate_total_hourly_consumption(self, time, price, outside_temperature, wind_speed, cloudiness):
         self.hourly_consumptions[time]= self.calculate_hourly_heating_consumption(outside_temperature, wind_speed, cloudiness) + sum([device.calculate_consumption(time.hour) for device in self.devices])
+        if(self.hourly_consumptions[time] < 0):
+            print(self.hourly_consumptions[time])
+            self.battery.charge(-self.hourly_consumptions[time])
         self.hourly_consumption_price[time] = self.hourly_consumptions[time]  * price
         self.total_consumption += self.hourly_consumptions[time]         
         self.total_consumption_price += self.hourly_consumption_price[time]
     
 
     def calculate_hourly_heating_consumption(self, outside_temperature, wind_speed, cloudiness):
+        if(outside_temperature >= self.target_temperature):
+            return 0
         # Calculate the temperature difference
         temperature_difference = self.target_temperature - outside_temperature
 
@@ -92,6 +98,12 @@ class House:
         # self.total_consumption_price += self.hourly_consumption_price[time]
 
     
+    def add_battery(self, battery):
+        self.battery = battery
+    
+    def add_device(self, device):
+        self.devices.append(device)
+    
     def get_total_consumption_price(self):
         print(self.total_consumption_price)
 
@@ -100,9 +112,6 @@ class House:
 
     def get_devices(self):
         return self.devices
-    
-    def add_device(self, device):
-        self.devices.append(device)
 
     def get_total_consumption(self):
         print(self.total_consumption)
@@ -125,6 +134,8 @@ class House:
     def get_all_devices_hourly_usage(self):
         for device in self.devices:
             device.get_hourly_usage() 
+    
+    
 
 class Simulation:
     def __init__(self, start_date, end_date, hourly_data):
@@ -179,7 +190,7 @@ class Device:
     
     
 
-class solar_panel(Device):
+class Solar_Panel(Device):
     def __init__(self, name, power_rating):
         super().__init__(name, power_rating)
 
@@ -192,9 +203,27 @@ class solar_panel(Device):
 
     def calculate_consumption(self, hour):
         # For solar panels, the "consumption" is actually negative because they generate electricity
-        self.hourly_usage[hour] = -self.power_rating * self.usage_pattern(hour)
-        print(self.hourly_usage[hour])
+        self.hourly_usage[hour] = -self.power_rating * self.usage_pattern(hour)/1000
         return self.hourly_usage[hour]
+
+class Battery():
+    def __init__(self, name, capacity):
+        self.name = name
+        self.capacity = capacity
+        self.charge_level = 0
+
+    def charge(self, amount):
+        # Increase the charge level by the specified amount, up to the battery's capacity
+        self.charge_level = min(self.charge_level + amount, self.capacity)
+
+    def discharge(self, amount):
+        # Decrease the charge level by the specified amount, down to a minimum of 0
+        amount_discharged = min(amount, self.charge_level)
+        self.charge_level -= amount_discharged
+        return amount_discharged  # Return the actual amount discharged
+
+    def get_battery_level(self):
+        print(self.charge_level)
 
 
 #######################
@@ -205,7 +234,12 @@ device1 = Device("Device 1", 100.0)  # Example usage pattern [0.5, 0.5, 0.5] for
 device2 = Device("Device 2", 50.0)  # Example usage pattern [0.2, 0.3, 0.1] for 3 hours
 house1.add_device(device1)
 house1.add_device(device2)
-house1.add_device(solar_panel("Solar Panel", 100.0))  
+house1.add_device(Solar_Panel("Solar Panel", 100.0))  
+house1.add_device(Solar_Panel("Solar Panel 2", 300.0))
+house1.add_device(Solar_Panel("Solar Panel 3", 500.0))
+
+
+house1.add_battery(Battery("Battery 1", 10.0))
 
 simulation = Simulation(star_period, end_period, hourly_data)
 simulation.houses.append(house1)
@@ -213,6 +247,9 @@ simulation.run_simulation()
 
 
 
-house1.get_power_usage_time_period('2023-03-05 00:00:00', '2023-03-05 23:00:00')
+house1.get_power_usage_time_period('2023-07-12 00:00:00', '2023-07-12 23:00:00')
 
 house1.get_all_devices_hourly_usage()
+house1.get_total_consumption()
+
+house1.battery.get_battery_level()

@@ -57,4 +57,4 @@ def calculate_hourly_energy_consumption(target_temperature, outside_temperature,
     return energy_needed
 
 # Test the function
-print(calculate_hourly_energy_consumption(20, 1.3, 5, 0.5, 120, 0.8))
+print(calculate_hourly_energy_consumption(20, 20, 5, 0.5, 120, 0.8))
