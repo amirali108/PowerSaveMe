@@ -2,7 +2,7 @@ import pandas as pd
 
 from datetime import datetime
 
-star_period = '2023-07-12'
+star_period = '2023-07-08'
 end_period = '2023-07-12'
 
 # make relative path for the repo 
@@ -11,12 +11,13 @@ hourly_data = pd.read_csv(r'C:\Users\suad\Desktop\programming\PowerSaveMe\hourly
 
 
 class House:
-    def __init__(self, name, size, heating_type, insulation,heating_efficiency):
+    def __init__(self, name, size, heating_type, insulation,heating_efficiency, optimize):
         self.name = name
         self.house_size = size
         self.heating_efficiency = heating_efficiency
         self.heating_type = heating_type
         self.insulation = insulation
+        self.optimize = optimize
         self.battery = None
         self.devices = []
         self.target_temperature = 20.5
@@ -37,9 +38,25 @@ class House:
 
     def calculate_total_hourly_consumption(self, time, price, outside_temperature, wind_speed, cloudiness):
         self.hourly_consumptions[time]= self.calculate_hourly_heating_consumption(outside_temperature, wind_speed, cloudiness) + sum([device.calculate_consumption(time.hour) for device in self.devices])
-        if(self.hourly_consumptions[time] < 0):
-            print(self.hourly_consumptions[time])
-            self.battery.charge(-self.hourly_consumptions[time])
+
+        ##############################
+        # optimization block 
+
+        if(self.optimize and self.battery):
+            if(self.hourly_consumptions[time] < 0):
+                if(self.battery.is_full() is not True):
+                    self.battery.charge(-self.hourly_consumptions[time])
+                    self.hourly_consumptions[time] = 0
+            if(self.hourly_consumptions[time] > 0):
+                if(self.battery.charge_level > self.hourly_consumptions[time]):
+                    self.battery.discharge(self.hourly_consumptions[time])
+                    self.hourly_consumptions[time] = 0
+                else:
+                    self.hourly_consumptions[time] -= self.battery.discharge(self.hourly_consumptions[time])
+
+        ##############################
+        
+
         self.hourly_consumption_price[time] = self.hourly_consumptions[time]  * price
         self.total_consumption += self.hourly_consumptions[time]         
         self.total_consumption_price += self.hourly_consumption_price[time]
@@ -215,12 +232,17 @@ class Battery():
     def charge(self, amount):
         # Increase the charge level by the specified amount, up to the battery's capacity
         self.charge_level = min(self.charge_level + amount, self.capacity)
+        
 
     def discharge(self, amount):
         # Decrease the charge level by the specified amount, down to a minimum of 0
         amount_discharged = min(amount, self.charge_level)
         self.charge_level -= amount_discharged
         return amount_discharged  # Return the actual amount discharged
+    
+    def is_full(self):
+        # Return True if the battery is fully charged; False otherwise
+        return self.charge_level == self.capacity
 
     def get_battery_level(self):
         print(self.charge_level)
@@ -229,7 +251,7 @@ class Battery():
 #######################
 
 # Example usage:
-house1 = House("House 1", 120, "electric", 0.9, 0.8)
+house1 = House("House 1", 120, "electric", 0.9, 0.8, True)
 device1 = Device("Device 1", 100.0)  # Example usage pattern [0.5, 0.5, 0.5] for 3 hours
 device2 = Device("Device 2", 50.0)  # Example usage pattern [0.2, 0.3, 0.1] for 3 hours
 house1.add_device(device1)
@@ -247,7 +269,7 @@ simulation.run_simulation()
 
 
 
-house1.get_power_usage_time_period('2023-07-12 00:00:00', '2023-07-12 23:00:00')
+house1.get_power_usage_time_period('2023-07-8 00:00:00', '2023-07-12 23:00:00')
 
 house1.get_all_devices_hourly_usage()
 house1.get_total_consumption()
