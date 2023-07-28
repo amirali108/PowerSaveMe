@@ -2,8 +2,8 @@ import pandas as pd
 
 from datetime import datetime
 
-star_period = '2023-07-06'
-end_period = '2023-07-08'
+star_period = '2023-04-01'
+end_period = '2023-06-08'
 
 # make relative path for the repo 
 hourly_data = pd.read_csv(r'C:\Users\suad\Desktop\programming\PowerSaveMe\hourly_data.csv', index_col=0, parse_dates=True)
@@ -286,7 +286,7 @@ class Simulation:
 ###############################
 
 # Example usage:
-house1 = House("House 1", 120, "electric", 0.9, 0.8, True)
+#house1 = House("House 1", 120, "electric", 0.9, 0.8, True)
 house2= House("House 2", 120, "electric", 0.9, 0.8, False)
 
 device1 = Device("Device 1", 100.0)  # Example usage pattern [0.5, 0.5, 0.5] for 3 hours
@@ -295,38 +295,43 @@ device2 = Device("Device 2", 50.0)  # Example usage pattern [0.2, 0.3, 0.1] for 
 house2.add_device(Device("Device 3", 100.0))
 house2.add_device(Device("Device 4", 50.0))
 
-house1.add_device(device1)
-house1.add_device(device2)
-house1.add_device(Solar_Panel("Solar Panel", 100.0))  
-house1.add_device(Solar_Panel("Solar Panel 2", 300.0))
-house1.add_device(Solar_Panel("Solar Panel 3", 500.0))
+# house1.add_device(device1)
+# house1.add_device(device2)
+# house1.add_device(Solar_Panel("Solar Panel", 100.0))  
+# house1.add_device(Solar_Panel("Solar Panel 2", 300.0))
+# house1.add_device(Solar_Panel("Solar Panel 3", 500.0))
 
 house2.add_device(Solar_Panel("Solar Panel", 100.0))
 house2.add_device(Solar_Panel("Solar Panel 4", 300.0))
 house2.add_device(Solar_Panel("Solar Panel 5", 500.0))
 
-house1.add_battery(Battery("Battery 1", 10.0))
+#house1.add_battery(Battery("Battery 1", 10.0))
 
 simulation = Simulation(star_period, end_period, hourly_data)
-simulation.houses.append(house1)
+#simulation.houses.append(house1)
 simulation.houses.append(house2)
 simulation.run_simulation()
 
 
 
 
-house1.get_hourly_consumptions()
+#house1.get_hourly_consumptions()
 
-house1.get_total_consumption()
-print("price for total consumption House 1"+ str(house1.get_total_consumption_price()))
+#house1.get_total_consumption()
+#print("price for total consumption House 1"+ str(house1.get_total_consumption_price()))
 
-house1.battery.get_battery_level()
+#house1.battery.get_battery_level()
 
 
 print("##############################################")
-house2.get_hourly_consumptions()
 
 house2.get_total_consumption()
+
+df = pd.DataFrame(list(zip(simulation.randomlst, house2.hourly_consumptions.values())), columns =['Price', 'Consumption'])
+
+# Export to CSV
+df.to_csv('output.csv', index=False)
+
 print("price for total consumption House 2"+ str(house2.get_total_consumption_price()))
 
 print("##############################################")
