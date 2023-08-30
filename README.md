@@ -128,3 +128,14 @@ nextTwoDays.forEach((entry) => {
   sheet.appendRow(row);
 });
 ```
+## Back-End installation Guide
+### First pull the repository
+### Navigate to the root folder
+### Install these packages using pip install 
+django = "*"
+requests = "*"
+djangorestframework = "*"
+opencage = "*"
+pandas = "*"
+### Run the Back-End using this command: python manage.py runserver
+
