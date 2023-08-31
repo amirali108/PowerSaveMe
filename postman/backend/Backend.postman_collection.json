@@ -1,0 +1,52 @@
+{
+	"info": {
+		"_postman_id": "c080a304-f798-452a-aa4d-8452c80ea354",
+		"name": "Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25552924"
+	},
+	"item": [
+		{
+			"name": "http://127.0.0.1:8000/simulate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "houses",
+							"value": "[{\"name\":\"house2\",\"size\":125,\"heating\":\"electrical\",\"heating_efficiency\":0.6,\"cooling_efficiency\":0.8,\"has_battery\":true,\"adress\":\"Tallundsvägen 5, Luleå\",\"devices\":[{\"type\":\"solar\",\"name\":\"solar_panel1\",\"power\":312},{\"type\":\"other\",\"name\":\"TV\",\"power\":200}],\"batteries\":[{\"name\":\"battery1\",\"capacity\":10}]}]",
+							"type": "text"
+						},
+						{
+							"key": "start_period",
+							"value": "2023-05-24",
+							"type": "text"
+						},
+						{
+							"key": "end_period",
+							"value": "2023-05-30",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/simulate",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"simulate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

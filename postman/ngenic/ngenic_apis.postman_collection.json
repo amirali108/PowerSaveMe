@@ -1,0 +1,134 @@
+{
+	"info": {
+		"_postman_id": "88b238c9-d3bd-4655-b8f4-e0980c0a2a69",
+		"name": "ngenic_apis",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25552924"
+	},
+	"item": [
+		{
+			"name": "https://app.ngenic.se/api/v3/tunes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 306aa8d101f93a95734daa1f9f3d32f6"
+					}
+				],
+				"url": {
+					"raw": "https://app.ngenic.se/api/v3/tunes",
+					"protocol": "https",
+					"host": [
+						"app",
+						"ngenic",
+						"se"
+					],
+					"path": [
+						"api",
+						"v3",
+						"tunes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://app.ngenic.se/api/v3/tunes/e5b6a755-5ee9-eb11-a7ac-e42aac6e0f30/rooms",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 306aa8d101f93a95734daa1f9f3d32f6"
+					}
+				],
+				"url": {
+					"raw": "https://app.ngenic.se/api/v3/tunes/e5b6a755-5ee9-eb11-a7ac-e42aac6e0f30/rooms",
+					"protocol": "https",
+					"host": [
+						"app",
+						"ngenic",
+						"se"
+					],
+					"path": [
+						"api",
+						"v3",
+						"tunes",
+						"e5b6a755-5ee9-eb11-a7ac-e42aac6e0f30",
+						"rooms"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://app.ngenic.se/api/v3/tunes/e5b6a755-5ee9-eb11-a7ac-e42aac6e0f30/measurements/7ef55724-c20c-ee11-907c-000d3ab7b1fa/types",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 306aa8d101f93a95734daa1f9f3d32f6"
+					}
+				],
+				"url": {
+					"raw": "https://app.ngenic.se/api/v3/tunes/e5b6a755-5ee9-eb11-a7ac-e42aac6e0f30/measurements/7ef55724-c20c-ee11-907c-000d3ab7b1fa/types",
+					"protocol": "https",
+					"host": [
+						"app",
+						"ngenic",
+						"se"
+					],
+					"path": [
+						"api",
+						"v3",
+						"tunes",
+						"e5b6a755-5ee9-eb11-a7ac-e42aac6e0f30",
+						"measurements",
+						"7ef55724-c20c-ee11-907c-000d3ab7b1fa",
+						"types"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://app.ngenic.se/api/v3/tunes/e5b6a755-5ee9-eb11-a7ac-e42aac6e0f30/measurements/7ef55724-c20c-ee11-907c-000d3ab7b1fa/latest?type=temperature_C",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 306aa8d101f93a95734daa1f9f3d32f6"
+					}
+				],
+				"url": {
+					"raw": "https://app.ngenic.se/api/v3/tunes/e5b6a755-5ee9-eb11-a7ac-e42aac6e0f30/measurements/7ef55724-c20c-ee11-907c-000d3ab7b1fa/latest?type=temperature_C",
+					"protocol": "https",
+					"host": [
+						"app",
+						"ngenic",
+						"se"
+					],
+					"path": [
+						"api",
+						"v3",
+						"tunes",
+						"e5b6a755-5ee9-eb11-a7ac-e42aac6e0f30",
+						"measurements",
+						"7ef55724-c20c-ee11-907c-000d3ab7b1fa",
+						"latest"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "temperature_C"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
