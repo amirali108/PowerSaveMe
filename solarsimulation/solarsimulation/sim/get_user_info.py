@@ -125,7 +125,6 @@ def get_metereological_data(lat, long, eletrical_region):
         "User-Agent": "Your User Agent"
     })
 
-    print(res.status_code)
 
     if res.status_code == 200:
         # Parse the JSON response
@@ -138,15 +137,12 @@ def get_metereological_data(lat, long, eletrical_region):
             date = date.split('T')[0] + ' ' + date.split('T')[1].split(':')[0] + ':00:00'
             try:
                 combined_data[datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')].append(price)
-                print("appended price")
             except:
-                print("price dont wok")
                 pass
     else:
         del types[-1]
         print(f"Error: {res.status_code} - {res.reason}")
     df = pd.DataFrame(combined_data.items(), columns=['Date', 'Values'])
-    print(df)
     # Split the 'Values' column into separate columns for Temperature and Cloudiness
     df[types] = pd.DataFrame(df['Values'].tolist(), index=df.index)
 
@@ -162,7 +158,6 @@ def get_metereological_data(lat, long, eletrical_region):
 
     # Keep only Date, Temperature, and Wind Speed columns
     df = df[['Date'] + types].set_index('Date')
-    print(df)
     return df
 
 
