@@ -1,4 +1,28 @@
 # PowerSaveMe
+
+## Back-End setup guide
+### First pull the repository
+### Navigate to the root folder
+### Install these packages using pip install or use an virtual environment
+
+1. django = "*"
+2. requests = "*"
+3. djangorestframework = "*"
+4. opencage = "*"
+5. pandas = "*"
+
+### Run the Back-End using this command: python manage.py runserver
+There is only one route. I would highly recommend using Postman to test it. <br>
+Here is an image of how the request should look like in Postman.
+![image](example_request.png)	
+
+The postman file is included in the repository, so you can import it and test it yourself. <br>
+
+## Front-End setup Guide
+### Navigate to the Front-End folder
+### Install these packages using npm install
+### Run the Front-End using npm start
+
 ## Used API's
 ### Electricy Prices
 First the free API from https://www.elprisetjustnu.se/elpris-api was found. It returns a json which includes the price for KwH in SEK and EUR and the time(hourly). To receive the data in
@@ -128,25 +152,3 @@ nextTwoDays.forEach((entry) => {
   sheet.appendRow(row);
 });
 ```
-## Back-End setup guide
-### First pull the repository
-### Navigate to the root folder
-### Install these packages using pip install or use an virtual environment
-
-1. django = "*"
-2. requests = "*"
-3. djangorestframework = "*"
-4. opencage = "*"
-5. pandas = "*"
-
-### Run the Back-End using this command: python manage.py runserver
-There is only one route. I would highly recommend using Postman to test it. <br>
-Here is an image of how the request should look like in Postman.
-![image](example_request.png)	
-
-The postman file is included in the repository, so you can import it and test it yourself. <br>
-
-## Front-End setup Guide
-### Navigate to the Front-End folder
-### Install these packages using npm install
-### Run the Front-End using npm start
