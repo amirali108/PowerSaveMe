@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from .sim.simulation_classes import House, Device, Solar_Panel, Battery, Simulation
 import pandas as pd
+import json
 
 @permission_classes(["AllowAny"])
 @parser_classes(["JSONParser"])
@@ -23,7 +24,12 @@ def simulate(request):
 
     simulations = []
 
-    for house in request.data.get("houses"):
+    houses = request.data.get("houses")
+
+    if type(houses) != list:
+        houses = json.loads(houses)
+
+    for house in houses:
         hourly_data = get_user_info(house["adress"])
         simulations.append(Simulation(request.data.get("start_period"), request.data.get("end_period"), hourly_data))
         current_house1 = House(house["name"], house["size"], house["heating"], house["heating_efficiency"], house["cooling_efficiency"], house["has_battery"])

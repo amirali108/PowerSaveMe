@@ -10,14 +10,6 @@ from math import radians, sin, cos, sqrt, atan2
 from opencage.geocoder import OpenCageGeocode
 
 
-def success_or_not(response):
-    if response.status_code == 200:
-        print("Success!")
-        return True
-    else:
-        print("Something went wrong. Status code: " + str(response.status_code))
-        return False
-
 
 
 def get_lat_and_long(adress):
@@ -36,7 +28,6 @@ def get_lat_and_long(adress):
     city = location['components'].get('city', 'N/A')  # Using get() to handle missing keys
     county = location['components'].get('county', 'N/A')
     municipality = location['components'].get('municipality', 'N/A')
-
     return latitude, longitude, nuts1_code, city, county, municipality
 
 
@@ -79,7 +70,6 @@ def find_closest_station(cur_latitude, cur_longitude):
             closest_active_station = station
             break
         
-
     return closest_active_station['id']
 
 
@@ -91,7 +81,7 @@ def get_metereological_data(lat, long, eletrical_region):
     combined_data = {}
 
     types = ['Temperature', 'Cloudiness','Wind speed', 'Price']
-
+ 
     endpoints = [
     'https://opendata-download-metobs.smhi.se/api/version/latest/parameter/1/station/' + str(find_closest_station(lat, long))+'/period/latest-months/data.json',
     'https://opendata-download-metobs.smhi.se/api/version/latest/parameter/16/station/'+str(find_closest_station(lat, long))+'/period/latest-months/data.json',
@@ -129,10 +119,13 @@ def get_metereological_data(lat, long, eletrical_region):
 
     start_date = (list(combined_data.keys())[0]).date()
     end_date = (list(combined_data.keys())[-1]).date()                           
-
+    
+   
     res= requests.get('https://www.vattenfall.se/api/price/spot/pricearea/'+str(start_date)+'/'+str(end_date)+'/'+eletrical_region, headers= {
         "User-Agent": "Your User Agent"
     })
+
+    print(res.status_code)
 
     if res.status_code == 200:
         # Parse the JSON response
@@ -142,18 +135,18 @@ def get_metereological_data(lat, long, eletrical_region):
         for entry in parsed_data:
             date = entry["TimeStamp"]
             price = entry["Value"]
-
-            # haram code 
             date = date.split('T')[0] + ' ' + date.split('T')[1].split(':')[0] + ':00:00'
             try:
                 combined_data[datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')].append(price)
+                print("appended price")
             except:
+                print("price dont wok")
                 pass
     else:
         del types[-1]
         print(f"Error: {res.status_code} - {res.reason}")
-
     df = pd.DataFrame(combined_data.items(), columns=['Date', 'Values'])
+    print(df)
     # Split the 'Values' column into separate columns for Temperature and Cloudiness
     df[types] = pd.DataFrame(df['Values'].tolist(), index=df.index)
 
@@ -163,11 +156,13 @@ def get_metereological_data(lat, long, eletrical_region):
 
     if "Cloudiness" in types:
         df['Cloudiness'] = df['Cloudiness'].fillna(method='ffill')
+
     if "Price" in types:
         df['Price'] = df['Price'].fillna(method='ffill')
 
     # Keep only Date, Temperature, and Wind Speed columns
     df = df[['Date'] + types].set_index('Date')
+    print(df)
     return df
 
 
