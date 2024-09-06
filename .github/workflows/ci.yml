@@ -1,6 +1,6 @@
 name: CI/CD Pipeline
 
-# Run the workflow on pushes or pull requests to the main branch
+# Trigger the workflow on pushes or pull requests to the main branch
 on:
   push:
     branches:
@@ -22,19 +22,19 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16' # You can change this version as per the project requirement
+        node-version: '16'  # You can change this version as per the project requirement
 
     # Step 3: Install dependencies
     - name: Install dependencies
       run: npm install
-      working-directory: ./solar_ui # Adjust if solar_ui is the root directory
+      working-directory: ./solar_ui  # Make sure the path is correct
 
     # Step 4: Run ESLint to check code quality
     - name: Run Lint
       run: npm run lint
       working-directory: ./solar_ui
 
-    # Step 5: Run tests (now with updated Jest)
+    # Step 5: Run tests
     - name: Run Tests
       run: npm test
       working-directory: ./solar_ui
@@ -45,7 +45,7 @@ jobs:
       working-directory: ./solar_ui
 
   # Optional: Deploy to GitHub Pages after the build step
-  # Uncomment if you want to deploy to GitHub Pages or similar service
+  # Uncomment if you want to deploy the project
   # deploy:
   #   runs-on: ubuntu-latest
   #   needs: build
