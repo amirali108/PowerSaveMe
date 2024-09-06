@@ -52,6 +52,17 @@
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .js,.jsx"
   },
+  "jest": {
+    "transform": {
+      "^.+\\.(js|jsx)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!react-syntax-highlighter)"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+    }
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -78,6 +89,8 @@
   "devDependencies": {
     "@babel/core": "^7.21.4",
     "@babel/eslint-parser": "^7.21.3",
+    "babel-jest": "^27.4.0",  // Ensure babel-jest is installed
+    "identity-obj-proxy": "^3.0.0",  // Mock for CSS modules in Jest
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-react-app": "^7.0.1",
