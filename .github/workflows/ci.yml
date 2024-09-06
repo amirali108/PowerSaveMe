@@ -1,14 +1,12 @@
 name: CI/CD Pipeline
 
-# Run the workflow on pushes or pull requests to the master or main branch
+# Run the workflow on pushes or pull requests to the main branch
 on:
   push:
     branches:
-      - master
       - main
   pull_request:
     branches:
-      - master
       - main
 
 jobs:
@@ -46,7 +44,8 @@ jobs:
       run: npm run build
       working-directory: ./solar_ui
 
-  # Uncomment below if you want to deploy the project after a successful build
+  # Optional: Deploy to GitHub Pages after the build step
+  # Uncomment if you want to deploy to GitHub Pages or similar service
   # deploy:
   #   runs-on: ubuntu-latest
   #   needs: build
