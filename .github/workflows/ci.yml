@@ -1,0 +1,62 @@
+name: CI/CD Pipeline
+
+# Run the workflow on pushes or pull requests to the master or main branch
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Node.js environment
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16' # You can change this version as per the project requirement
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./solar_ui # Adjust if solar_ui is the root directory
+
+    # Step 4: Run ESLint to check code quality
+    - name: Run Lint
+      run: npm run lint
+      working-directory: ./solar_ui
+
+    # Step 5: Run tests
+    - name: Run Tests
+      run: npm test
+      working-directory: ./solar_ui
+
+    # Step 6: Build the project
+    - name: Build Project
+      run: npm run build
+      working-directory: ./solar_ui
+
+  # Uncomment below if you want to deploy the project after a successful build
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v3
+  #
+  #   - name: Deploy to GitHub Pages
+  #     uses: peaceiris/actions-gh-pages@v3
+  #     with:
+  #       github_token: ${{ secrets.GITHUB_TOKEN }}
+  #       publish_dir: ./solar_ui/build
