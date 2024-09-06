@@ -29,12 +29,12 @@ jobs:
       run: npm install
       working-directory: ./solar_ui # Adjust if solar_ui is the root directory
 
-    # Step 4: Run ESLint to check code quality (optional, you can comment this if not required)
+    # Step 4: Run ESLint to check code quality
     - name: Run Lint
       run: npm run lint
       working-directory: ./solar_ui
 
-    # Step 5: Run tests
+    # Step 5: Run tests (now with updated Jest)
     - name: Run Tests
       run: npm test
       working-directory: ./solar_ui
