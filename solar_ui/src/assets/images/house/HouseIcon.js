@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 const HouseIcon = ({ height, width }) => {
   const theme = useTheme();
+
   return (
     <Icon height={height} width={width}>
       <g>
@@ -24,9 +25,9 @@ const HouseIcon = ({ height, width }) => {
   );
 };
 
-HouseIcon.PropTypes = {
-  height: PropTypes.number,
-  width: PropTypes.number
+HouseIcon.propTypes = {
+  height: PropTypes.number.isRequired,
+  width: PropTypes.number.isRequired,
 };
 
 export default HouseIcon;
