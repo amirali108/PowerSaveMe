@@ -27,22 +27,22 @@ jobs:
     # Step 3: Install dependencies
     - name: Install dependencies
       run: npm install
-      working-directory: ./solar_ui # Adjust if solar_ui is the root directory
+      working-directory: ./solar_ui # Adjusted to point to the solar_ui directory
 
-    # Step 4: Run ESLint to check code quality
+    # Step 4: Run ESLint to check code quality (If applicable)
     - name: Run Lint
       run: npm run lint
-      working-directory: ./solar_ui
+      working-directory: ./solar_ui # Ensure your lint script is inside solar_ui/package.json
 
-    # Step 5: Run tests
+    # Step 5: Run tests (If applicable)
     - name: Run Tests
       run: npm test
-      working-directory: ./solar_ui
+      working-directory: ./solar_ui # Ensure your test script is inside solar_ui/package.json
 
     # Step 6: Build the project
     - name: Build Project
       run: npm run build
-      working-directory: ./solar_ui
+      working-directory: ./solar_ui # Ensure your build script is inside solar_ui/package.json
 
   # Optional: Deploy to GitHub Pages after the build step
   # Uncomment if you want to deploy to GitHub Pages or similar service
