@@ -1,24 +1,37 @@
 version: '3'
 
 services:
+  # Backend service (PowerSaveMe repo)
   backend:
     build: .
     ports:
-      - "8001:8001"
+      - "8001:8001"  # Expose the backend on port 8001
     depends_on:
       - prometheus
     restart: always
 
+  # Frontend service (PowerSaveMeFrontend repo)
+  frontend:
+    build:
+      context: ../PowerSaveMeFrontend  # Path to the frontend repo
+    ports:
+      - "3001:3000"  # Expose the frontend on port 3001 (frontend runs on port 3000 inside container)
+    depends_on:
+      - backend
+    restart: always
+
+  # Prometheus service for monitoring
   prometheus:
     image: prom/prometheus
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml  # Link prometheus.yml
     ports:
-      - "9090:9090"
+      - "9090:9090"  # Expose Prometheus on port 9090
 
+  # Grafana service for metrics visualization
   grafana:
     image: grafana/grafana
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Expose Grafana on port 3000
     depends_on:
       - prometheus
